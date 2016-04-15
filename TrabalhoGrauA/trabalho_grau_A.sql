@@ -17,7 +17,7 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE TRIGGER criar_historico_on_delete_emprestimo
-	AFTER DELETE ON emprestimo
+	BEFORE DELETE ON emprestimo
 	FOR EACH ROW
 	EXECUTE PROCEDURE criar_historico();
 */
