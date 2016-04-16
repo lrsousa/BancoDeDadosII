@@ -1,23 +1,27 @@
 ﻿/*
 CREATE OR REPLACE FUNCTION criar_historico() RETURNS TRIGGER AS
 $$
+DECLARE
+	intervalo INTEGER;
 BEGIN
+	intervalo := CURRENT_DATE - OLD.DATARETIRADA;
 	INSERT INTO historico (idusuario, idlivro, datadevolucao, diasematraso)
-	SELECT * FROM(
-		SELECT em.idusuario, ex.idlivro, CURRENT_DATE AS datadevolucao, (CASE WHEN CURRENT_DATE - em.dataretirada > 14 THEN CURRENT_DATE - em.dataretirada ELSE 0 END) AS diasematraso
-		FROM emprestimo em JOIN exemplar ex
-		USING(idexemplar)
-		WHERE idusuario = OLD.idusuario AND idexemplar = OLD.idexemplar
-	) j;
+	VALUES(
+		OLD.IDUSUARIO,
+		(SELECT idlivro from exemplar WHERE idexemplar = OLD.IDEXEMPLAR),
+		CURRENT_DATE,
+		(CASE WHEN (intervalo > 14) THEN intervalo ELSE 0 END)
+	);
 		
 	RAISE NOTICE 'FEITOOOOO';
-	RETURN OLD;
+	RETURN NEW;
 END
 $$ LANGUAGE plpgsql;
 
 
 CREATE TRIGGER criar_historico_on_delete_emprestimo
-	BEFORE DELETE ON emprestimo
+	AFTER DELETE
+	ON emprestimo
 	FOR EACH ROW
 	EXECUTE PROCEDURE criar_historico();
 */
