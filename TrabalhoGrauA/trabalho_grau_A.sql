@@ -10,7 +10,7 @@ BEGIN
 		OLD.IDUSUARIO,
 		(SELECT idlivro from exemplar WHERE idexemplar = OLD.IDEXEMPLAR),
 		CURRENT_DATE,
-		(CASE WHEN (intervalo > 14) THEN intervalo ELSE 0 END)
+		(CASE WHEN (intervalo > 14) THEN (intervalo - 14) ELSE 0 END)
 	);
 		
 	RAISE NOTICE 'FEITOOOOO';
